@@ -6,7 +6,7 @@ Please refer to https://github.com/Flipkart/phantom/wiki/Maven-dependencies to s
 The sample Mysql proxy simply forwards Mysql queries from clients  to a target server and relays the response received.
 Follow these steps to setup and run your first Phantom Mysql proxy:
 
-* git clone Phantom
+* git clone phantom-mysql-proxy
 * Run `mvn clean install` in `sample-mysql-proxy` directory. This might take a while to download Phantom, Trooper and their dependencies from the various Maven repositories.
 * Start the proxy in `sample-mysql-proxy` directory:
 
@@ -31,5 +31,7 @@ org.trpr.platform.runtime.impl.bootstrap.BootstrapLauncher \
 ```
 
 * Point your mysql database config to host: localhost and port : 8080. You should see the mysql server configured in Mysql proxy config file located at: `sample-mysql-proxy/src/main/resources/external/spring-proxy-handler-config.xml` and `sample-mysql-proxy/src/main/resources/external/spring-proxy-listener-config.xml`
-* The monitoring console is available at : `http://localhost:8081/admin/dashboard`. This is the Hystrix console for deployed handlers and commands - in case of this sample, it is just one.
+* The monitoring console is available at : `http://localhost:8081/admin/dashboard`. This is the Hystrix console for deployed handlers and commands.
 
+## Phantom Consoles
+![Monitor](https://github.com/Flipkart/phantom-mysql-proxy/raw/master/docs/console.png)
