@@ -32,5 +32,3 @@ org.trpr.platform.runtime.impl.bootstrap.BootstrapLauncher \
 
 * Point your mysql database config to host: localhost and port : 8080. You should see the mysql server configured in Mysql proxy config file located at: `sample-mysql-proxy/src/main/resources/external/spring-proxy-handler-config.xml` and `sample-mysql-proxy/src/main/resources/external/spring-proxy-listener-config.xml`
 * The monitoring console is available at : `http://localhost:8081/admin/dashboard`. This is the Hystrix console for deployed handlers and commands.
-
-
