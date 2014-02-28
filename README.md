@@ -34,4 +34,4 @@ org.trpr.platform.runtime.impl.bootstrap.BootstrapLauncher \
 * The monitoring console is available at : `http://localhost:8081/admin/dashboard`. This is the Hystrix console for deployed handlers and commands.
 
 ## Phantom Consoles
-![Monitor](https://github.com/Flipkart/phantom-mysql-proxy/raw/master/docs/console.png)
+![Monitor](https://github.com/Flipkart/phantom-mysql-proxy/blob/master/doc/console.png)
