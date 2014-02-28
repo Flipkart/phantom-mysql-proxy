@@ -24,7 +24,7 @@ org.trpr.platform.runtime.impl.bootstrap.BootstrapLauncher \
       __/  \         Runtime Nature : SERVER
    __/  \__/         Component Container : com.flipkart.phantom.runtime.impl.spring.ServiceProxyComponentContainer
   /  \__/  \         Startup Time : 2,320 ms
-  \__/  \__/         Host Name:ReguMac.local
+  \__/  \__/         Host Name:Flipkarts-MacBook-Pro-133.local
      \__/
 *************************************************************************
 19:17:34.367 [main] INFO  o.t.p.r.i.bootstrap.spring.Bootstrap - ** Trooper Bootstrap complete **
