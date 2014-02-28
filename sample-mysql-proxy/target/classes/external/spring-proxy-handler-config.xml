@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+    http://www.springframework.org/schema/beans classpath:org/springframework/beans/factory/xml/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+    http://www.springframework.org/schema/context classpath:org/springframework/context/config/spring-context-2.5.xsd">
+
+    <!-- mysql proxy -->
+    <bean id="sampleMysqlProxy" class="com.flipkart.phantom.mysql.impl.SimpleMysqlProxy">
+        <property name="name" value="defaultProxy" />
+        <property name="host" value="localhost" />
+        <property name="port" value="3306"/>
+        <property name="operationTimeout" value="2000" />
+        <property name="poolSize" value="10" />
+        <property name="maxWait" value="100" />
+        <property name="timeBetweenEvictionRunsMillis" value="20000" />
+    </bean>
+
+</beans>
