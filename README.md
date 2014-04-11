@@ -1,34 +1,25 @@
-# Phantom Examples
-The examples that follow explore the various uses of Phantom.
+Phantom
+=======
 
-## Example: Mysql proxy in 5 minutes
-Please refer to https://github.com/Flipkart/phantom/wiki/Maven-dependencies to setup the requisite repository location in your Maven build settings.
-The sample Mysql proxy simply forwards Mysql queries from clients  to a target server and relays the response received.
-Follow these steps to setup and run your first Phantom Mysql proxy:
+Phantom is a high performance proxy for accessing distributed services. It is an RPC system with support for different
+transports and protocols. Phantom is inspired by Twitter Finagle clients and builds on the capabilities of technologies like
+Netty, Unix Domain Sockets, Netflix Hystrix and Spring. Phantom proxies have been used to serve hundreds of millions
+of API calls in production deployments at Flipkart.
 
-* git clone phantom-mysql-proxy
-* Run `mvn clean install` in `sample-mysql-proxy` directory. This might take a while to download Phantom, Trooper and their dependencies from the various Maven repositories.
-* Start the proxy in `sample-mysql-proxy` directory:
 
-```xml
-java -cp "./target/lib/*" \
-org.trpr.platform.runtime.impl.bootstrap.BootstrapLauncher \
-./src/main/resources/external/bootstrap.xml
-```
 
-* A successful start will display a message like below on the console:
+## Phantom Mysql Proxy Console
+![Monitor](https://github.com/Flipkart/phantom-mysql-proxy/raw/master/docs/console.png)
 
-```xml
-*************************************************************************
- Trooper __
-      __/  \         Runtime Nature : SERVER
-   __/  \__/         Component Container : com.flipkart.phantom.runtime.impl.spring.ServiceProxyComponentContainer
-  /  \__/  \         Startup Time : 2,320 ms
-  \__/  \__/         Host Name:Flipkarts-MacBook-Pro-133.local
-     \__/
-*************************************************************************
-19:17:34.367 [main] INFO  o.t.p.r.i.bootstrap.spring.Bootstrap - ** Trooper Bootstrap complete **
-```
+## Getting Started
+The [Getting Started](https://github.com/Flipkart/phantom-mysql-proxy/wiki/Getting-started) page has "5 minute" examples to help you start using Phantom Mysql proxy.
 
-* Point your mysql database config to host: localhost and port : 8080. You should see the mysql server configured in Mysql proxy config file located at: `sample-mysql-proxy/src/main/resources/external/spring-proxy-handler-config.xml` and `sample-mysql-proxy/src/main/resources/external/spring-proxy-listener-config.xml`
-* The monitoring console is available at : `http://localhost:8081/admin/dashboard`. This is the Hystrix console for deployed handlers and commands.
+## Documentation and Examples
+Phantom project modules that start with "sample" - for e.g. sample-mysql-proxy is an example proxy implementations.
+Documentation is continuously being added to the Wiki page of Phantom Mysql Proxy (https://github.com/Flipkart/phantom-mysql-proxy/wiki)
+
+## License
+Phantom is licensed under : The Apache Software License, Version 2.0. Here is a copy of the license (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+This project is under development and not tested for production release. It is currently in use for testing service failures
+in stage and qa environment.
