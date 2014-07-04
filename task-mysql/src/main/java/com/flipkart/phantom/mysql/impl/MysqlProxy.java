@@ -1,18 +1,18 @@
 package com.flipkart.phantom.mysql.impl;
 
-import com.flipkart.phantom.task.spi.AbstractHandler;
-import com.flipkart.phantom.task.spi.TaskContext;
-import com.github.jmpjct.mysql.proto.Com_Query;
-import com.github.jmpjct.mysql.proto.Packet;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.Socket;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.flipkart.phantom.task.spi.AbstractHandler;
+import com.flipkart.phantom.task.spi.TaskContext;
+import com.github.mpjct.jmpjct.mysql.proto.Com_Query;
+import com.github.mpjct.jmpjct.mysql.proto.Packet;
 
 /**
  /**

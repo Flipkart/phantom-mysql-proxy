@@ -1,19 +1,5 @@
 package com.flipkart.phantom.runtime.impl.server.netty.handler.mysql;
 
-import com.flipkart.phantom.event.ServiceProxyEventProducer;
-import com.flipkart.phantom.mysql.impl.MysqlProxyExecutor;
-import com.flipkart.phantom.mysql.impl.MysqlRequestWrapper;
-import com.flipkart.phantom.runtime.impl.server.netty.channel.mysql.MysqlNettyChannelBuffer;
-import com.flipkart.phantom.task.spi.Executor;
-import com.flipkart.phantom.task.spi.repository.ExecutorRepository;
-import com.github.jmpjct.mysql.proto.*;
-import org.jboss.netty.channel.*;
-import org.jboss.netty.channel.group.ChannelGroup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
-
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,6 +7,32 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.jboss.netty.channel.ChannelEvent;
+import org.jboss.netty.channel.ChannelHandlerContext;
+import org.jboss.netty.channel.ChannelStateEvent;
+import org.jboss.netty.channel.ExceptionEvent;
+import org.jboss.netty.channel.MessageEvent;
+import org.jboss.netty.channel.SimpleChannelHandler;
+import org.jboss.netty.channel.group.ChannelGroup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
+
+import com.flipkart.phantom.event.ServiceProxyEventProducer;
+import com.flipkart.phantom.mysql.impl.MysqlProxyExecutor;
+import com.flipkart.phantom.mysql.impl.MysqlRequestWrapper;
+import com.flipkart.phantom.runtime.impl.server.netty.channel.mysql.MysqlNettyChannelBuffer;
+import com.flipkart.phantom.task.spi.Executor;
+import com.flipkart.phantom.task.spi.repository.ExecutorRepository;
+import com.github.mpjct.jmpjct.mysql.proto.Com_Initdb;
+import com.github.mpjct.jmpjct.mysql.proto.Com_Query;
+import com.github.mpjct.jmpjct.mysql.proto.Flags;
+import com.github.mpjct.jmpjct.mysql.proto.Handshake;
+import com.github.mpjct.jmpjct.mysql.proto.HandshakeResponse;
+import com.github.mpjct.jmpjct.mysql.proto.Packet;
+import com.github.mpjct.jmpjct.mysql.proto.ResultSet;
 
 /**
  * <code>MysqlChannelHandler</code> is a sub-type of {@link SimpleChannelHandler} that acts as a proxy for Mysql calls using the mysql protocol.
@@ -197,16 +209,17 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
 
         this.buffer =  (ArrayList<byte[]>)messageEvent.getMessage();
 
-        Auth_Response authReply = Auth_Response.loadFromPacket(this.buffer.get(0));
-        if (!authReply.hasCapabilityFlag(Flags.CLIENT_PROTOCOL_41)) {
-            LOGGER.debug("We do not support Protocols under 4.1");
+        HandshakeResponse response = HandshakeResponse.loadFromPacket(this.buffer.get(0));
+        
+        if (!response.hasCapabilityFlag(Flags.CLIENT_PROTOCOL_41)) {
+        	LOGGER.error("We do not support Protocols under 4.1");
             return;
         }
-
-        authReply.removeCapabilityFlag(Flags.CLIENT_COMPRESS);
-        authReply.removeCapabilityFlag(Flags.CLIENT_SSL);
-        authReply.removeCapabilityFlag(Flags.CLIENT_LOCAL_FILES);
-
+        
+        response.removeCapabilityFlag(Flags.CLIENT_COMPRESS);
+        response.removeCapabilityFlag(Flags.CLIENT_SSL);
+        response.removeCapabilityFlag(Flags.CLIENT_LOCAL_FILES);
+        
         /* Adding client auth request buffer to connRefBytes. This object will be forwarded to
            to Mysql proxy to establish the connection and validate the client credentials before forwarding the
            queries to mysql server

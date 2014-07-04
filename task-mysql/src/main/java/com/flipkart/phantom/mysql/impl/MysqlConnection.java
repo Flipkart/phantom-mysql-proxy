@@ -1,13 +1,17 @@
 package com.flipkart.phantom.mysql.impl;
 
-import com.github.jmpjct.mysql.proto.Flags;
-import com.github.jmpjct.mysql.proto.Packet;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.util.ArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.Socket;
-import java.util.ArrayList;
+import com.github.mpjct.jmpjct.mysql.proto.Flags;
+import com.github.mpjct.jmpjct.mysql.proto.Packet;
 
 
  /**

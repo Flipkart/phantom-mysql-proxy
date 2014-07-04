@@ -1,17 +1,18 @@
 package com.flipkart.phantom.runtime.impl.server.netty.decoder.mysql;
 
-import com.github.jmpjct.mysql.proto.Com_Query;
-import com.github.jmpjct.mysql.proto.Packet;
+import java.io.InputStream;
+import java.util.ArrayList;
+
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBufferInputStream;
-import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.handler.codec.frame.FrameDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.io.InputStream;
-import java.util.ArrayList;
+
+import com.github.mpjct.jmpjct.mysql.proto.Com_Query;
+import com.github.mpjct.jmpjct.mysql.proto.Packet;
 
 /**
  * <code>MysqlPacketDecoder</code> is an extension of the Netty {@link org.jboss.netty.handler.codec.frame.FrameDecoder} that ensures that all mysql protocol bytes have been received

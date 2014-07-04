@@ -1,17 +1,18 @@
 package com.flipkart.phantom.runtime.impl.server.netty.channel.mysql;
 
-import com.github.jmpjct.mysql.proto.ColCount;
-import com.github.jmpjct.mysql.proto.EOF;
-import com.github.jmpjct.mysql.proto.Flags;
-import com.github.jmpjct.mysql.proto.Packet;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.MessageEvent;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
+import com.github.mpjct.jmpjct.mysql.proto.ColCount;
+import com.github.mpjct.jmpjct.mysql.proto.EOF;
+import com.github.mpjct.jmpjct.mysql.proto.Flags;
+import com.github.mpjct.jmpjct.mysql.proto.Packet;
 
 /**
  * <code>MysqlNettyChannelBuffer</code> is a Mysql transport based on JBoss Netty's ChannelBuffers
