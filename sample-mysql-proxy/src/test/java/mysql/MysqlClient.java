@@ -1,14 +1,13 @@
 package mysql;
 
-import junit.framework.Assert;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import sun.print.resources.serviceui;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
-import java.sql.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import junit.framework.Assert;
+
+import org.junit.Test;
 
 /**
  * Created with IntelliJ IDEA.

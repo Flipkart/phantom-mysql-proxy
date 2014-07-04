@@ -17,30 +17,45 @@
     <name>Mysql Channel Handlers</name>
     <description>Mysql Channel Handlers</description>
 
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <distributionManagement>
+        <repository>
+            <id>clojars</id>
+            <name>Clojars repository</name>
+            <url>https://clojars.org/repo</url>
+        </repository>
+    </distributionManagement>
+
+    <scm>
+        <url>https://github.com/Flipkart/phantom</url>
+        <connection>https://github.com/Flipkart/phantom-mysql-proxy.git</connection>
+    </scm>
+
     <developers>
         <developer>
             <id>saikat</id>
             <name>Saikat Maitra</name>
             <email>saikat@flipkart.com</email>
         </developer>
-        </developers>
+        <developer>
+            <id>regunathb</id>
+            <name>Regunath B</name>
+            <email>regunathb@gmail.com</email>
+        </developer>
+    </developers>
 
     <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.4</version>
-        </dependency>
         <dependency>
             <groupId>com.flipkart.mysqlproxy</groupId>
             <artifactId>task-mysql</artifactId>
             <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.4</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
@@ -73,7 +88,6 @@
                     </archive>
                     <includes>
                         <include>packaged/**/*</include>
-                        <include>WEB-INF/**/*</include>
                         <include>com/**/*</include>
                     </includes>
                 </configuration>

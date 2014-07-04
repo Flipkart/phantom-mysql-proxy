@@ -2,12 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         
+    <modelVersion>4.0.0</modelVersion>
+    
     <parent>
         <artifactId>phantom-mysql-proxy</artifactId>
         <groupId>com.flipkart</groupId>
         <version>1.0</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.flipkart.mysqlproxy</groupId>
     <artifactId>task-mysql</artifactId>
@@ -15,36 +17,46 @@
     <version>1.0</version>
     <description>Mysql Task Framework</description>
 
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <distributionManagement>
+        <repository>
+            <id>clojars</id>
+            <name>Clojars repository</name>
+            <url>https://clojars.org/repo</url>
+        </repository>
+    </distributionManagement>
+
+    <scm>
+        <url>https://github.com/Flipkart/phantom</url>
+        <connection>https://github.com/Flipkart/phantom-mysql-proxy.git</connection>
+    </scm>
+
     <developers>
         <developer>
             <id>saikat</id>
             <name>Saikat Maitra</name>
             <email>saikat@flipkart.com</email>
         </developer>
+        <developer>
+            <id>regunathb</id>
+            <name>Regunath B</name>
+            <email>regunathb@gmail.com</email>
+        </developer>
     </developers>
 
     <dependencies>
         <!-- Third party dependencies -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.4</version>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.flipkart.phantom</groupId>
             <artifactId>task</artifactId>
-            <version>1.1.7</version>
-        </dependency>
-        <dependency>
-            <groupId>com.netflix.hystrix</groupId>
-            <artifactId>hystrix-core</artifactId>
-            <version>${com.netflix.hystrix.version}</version>
+            <version>${com.flipkart.phantom.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-pool</groupId>
@@ -57,17 +69,10 @@
             <version>5.1.26</version>
         </dependency>
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty</artifactId>
-            <version>${netty.version}</version>
-        </dependency>
-        <dependency>
             <groupId>mpjct</groupId>
             <artifactId>jmp</artifactId>
             <version>0.1.0</version>
         </dependency>
-
-
     </dependencies>
 
     <build>
