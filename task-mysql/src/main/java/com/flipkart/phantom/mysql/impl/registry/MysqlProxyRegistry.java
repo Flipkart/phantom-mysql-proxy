@@ -1,3 +1,19 @@
+/*
+ * Copyright 2012-2015, the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.flipkart.phantom.mysql.impl.registry;
 
 import com.flipkart.phantom.mysql.impl.MysqlProxy;
@@ -12,7 +28,6 @@ import org.trpr.platform.core.spi.logging.Logger;
 import java.util.*;
 
 /**
- *
  * Implementation of {@link AbstractHandlerRegistry} for MysqlProxy instances
  *
  * @author : samaitra
@@ -21,14 +36,19 @@ import java.util.*;
  */
 public class MysqlProxyRegistry implements AbstractHandlerRegistry {
 
-    /** logger */
+    /**
+     * logger
+     */
     private static Logger LOGGER = LogFactory.getLogger(MysqlProxyRegistry.class);
 
-    /** list of proxies by name */
-    private Map<String,MysqlProxy> proxies = new HashMap<String,MysqlProxy>();
+    /**
+     * list of proxies by name
+     */
+    private Map<String, MysqlProxy> proxies = new HashMap<String, MysqlProxy>();
 
     /**
      * Abstract method implementation
+     *
      * @see com.flipkart.phantom.task.spi.registry.AbstractHandlerRegistry#init(java.util.List, com.flipkart.phantom.task.spi.TaskContext)
      */
     @Override
@@ -42,12 +62,12 @@ public class MysqlProxyRegistry implements AbstractHandlerRegistry {
                     LOGGER.info("Initializing MysqlProxy: " + proxy.getName());
                     proxy.init(taskContext);
                     proxy.activate();
-                    initedHandlerInfos.add(new AbstractHandlerRegistry.InitedHandlerInfo(proxy,handlerConfigInfo));
+                    initedHandlerInfos.add(new AbstractHandlerRegistry.InitedHandlerInfo(proxy, handlerConfigInfo));
                 } catch (Exception e) {
                     LOGGER.error("Error initializing MysqlProxy {}. Error is: " + e.getMessage(), proxy.getName(), e);
                     throw new PlatformException("Error initializing MysqlProxy: " + proxy.getName(), e);
                 }
-                this.proxies.put(proxy.getName(),proxy);
+                this.proxies.put(proxy.getName(), proxy);
             }
         }
         return initedHandlerInfos.toArray(new AbstractHandlerRegistry.InitedHandlerInfo[0]);
@@ -55,6 +75,7 @@ public class MysqlProxyRegistry implements AbstractHandlerRegistry {
 
     /**
      * Abstract method implementation
+     *
      * @see com.flipkart.phantom.task.spi.registry.AbstractHandlerRegistry#reinitHandler(String, com.flipkart.phantom.task.spi.TaskContext)
      */
     @Override
@@ -75,6 +96,7 @@ public class MysqlProxyRegistry implements AbstractHandlerRegistry {
 
     /**
      * Abstract method implementation
+     *
      * @see com.flipkart.phantom.task.spi.registry.AbstractHandlerRegistry#shutdown(com.flipkart.phantom.task.spi.TaskContext)
      */
     @Override
@@ -92,6 +114,7 @@ public class MysqlProxyRegistry implements AbstractHandlerRegistry {
 
     /**
      * Abstract method implementation
+     *
      * @see com.flipkart.phantom.task.spi.registry.AbstractHandlerRegistry#getHandlers()
      */
     @Override
@@ -101,6 +124,7 @@ public class MysqlProxyRegistry implements AbstractHandlerRegistry {
 
     /**
      * Abstract method implementation
+     *
      * @see com.flipkart.phantom.task.spi.registry.AbstractHandlerRegistry#getHandler(String)
      */
     @Override
@@ -110,6 +134,7 @@ public class MysqlProxyRegistry implements AbstractHandlerRegistry {
 
     /**
      * Abstract method implementation
+     *
      * @see com.flipkart.phantom.task.spi.registry.AbstractHandlerRegistry#unregisterTaskHandler(com.flipkart.phantom.task.spi.AbstractHandler)
      */
     @Override

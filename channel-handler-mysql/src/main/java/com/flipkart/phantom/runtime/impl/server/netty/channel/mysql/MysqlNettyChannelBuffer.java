@@ -1,18 +1,33 @@
+/*
+ * Copyright 2012-2015, the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.flipkart.phantom.runtime.impl.server.netty.channel.mysql;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.MessageEvent;
 
 import com.github.mpjct.jmpjct.mysql.proto.ColCount;
 import com.github.mpjct.jmpjct.mysql.proto.EOF;
 import com.github.mpjct.jmpjct.mysql.proto.Flags;
 import com.github.mpjct.jmpjct.mysql.proto.Packet;
+import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.buffer.ChannelBuffers;
+import org.jboss.netty.channel.Channel;
+import org.jboss.netty.channel.MessageEvent;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * <code>MysqlNettyChannelBuffer</code> is a Mysql transport based on JBoss Netty's ChannelBuffers
@@ -29,16 +44,16 @@ public class MysqlNettyChannelBuffer extends Packet {
     }
 
     /**
-     *  read complete result set from mysql server all the input bytes
+     * read complete result set from mysql server all the input bytes
      */
     public static ArrayList<byte[]> readFullResultSet(InputStream in, MessageEvent messageEvent, ArrayList<byte[]> buffer, boolean bufferResultSet) throws IOException {
         // Assume we have the start of a result set already
 
-        byte[] packet = buffer.get((buffer.size()-1));
+        byte[] packet = buffer.get((buffer.size() - 1));
         long colCount = ColCount.loadFromPacket(packet).colCount;
 
         // Read the columns and the EOF field
-        for (int i = 0; i < (colCount+1); i++) {
+        for (int i = 0; i < (colCount + 1); i++) {
             packet = Packet.read_packet(in);
             if (packet == null) {
                 throw new IOException();
@@ -72,7 +87,7 @@ public class MysqlNettyChannelBuffer extends Packet {
                 break;
             }
 
-            if (position+packet.length > packedPacketSize) {
+            if (position + packet.length > packedPacketSize) {
                 int subsize = packedPacketSize - position;
                 System.arraycopy(packet, 0, packedPacket, position, subsize);
                 buffer.add(packedPacket);
@@ -84,10 +99,9 @@ public class MysqlNettyChannelBuffer extends Packet {
 
                 packedPacket = new byte[packedPacketSize];
                 position = 0;
-                System.arraycopy(packet, subsize, packedPacket, position, packet.length-subsize);
-                position += packet.length-subsize;
-            }
-            else {
+                System.arraycopy(packet, subsize, packedPacket, position, packet.length - subsize);
+                position += packet.length - subsize;
+            } else {
                 System.arraycopy(packet, 0, packedPacket, position, packet.length);
                 position += packet.length;
             }
@@ -111,12 +125,11 @@ public class MysqlNettyChannelBuffer extends Packet {
     }
 
     /**
-     *  Writes all the output bytes into the output ChannelBuffer
-     *
+     * Writes all the output bytes into the output ChannelBuffer
      */
     public static void write(Channel channel, ArrayList<byte[]> buffer) {
 
-        for (byte[] packet: buffer) {
+        for (byte[] packet : buffer) {
             ChannelBuffer cb = ChannelBuffers.copiedBuffer(packet);
             channel.write(cb);
         }

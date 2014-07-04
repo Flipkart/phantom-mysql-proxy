@@ -1,4 +1,25 @@
+/*
+ * Copyright 2012-2015, the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.flipkart.phantom.mysql.impl;
+
+import com.github.mpjct.jmpjct.mysql.proto.Flags;
+import com.github.mpjct.jmpjct.mysql.proto.Packet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -7,15 +28,9 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.github.mpjct.jmpjct.mysql.proto.Flags;
-import com.github.mpjct.jmpjct.mysql.proto.Packet;
-
-
- /**
- *  Class for Mysql Connection.
+/**
+ * Class for Mysql Connection.
  *
  * @author : samaitra
  * @version : 1.0
@@ -23,9 +38,10 @@ import com.github.mpjct.jmpjct.mysql.proto.Packet;
  */
 public class MysqlConnection {
 
-     /** Logger for this class*/
+    /**
+     * Logger for this class
+     */
     private static Logger logger = LoggerFactory.getLogger(MysqlConnection.class);
-
 
     /**
      * mysql socket to connect mysql server
@@ -35,20 +51,17 @@ public class MysqlConnection {
     /**
      * mysql socket input stream
      */
-
     public InputStream mysqlIn = null;
 
     /**
      * mysql socket output stream
      */
-
     public OutputStream mysqlOut = null;
 
     ArrayList<byte[]> buffer;
     private long sequenceId;
 
-
-    public MysqlConnection(String host, int port,ArrayList<ArrayList<byte[]>> connRefBytes) throws Exception{
+    public MysqlConnection(String host, int port, ArrayList<ArrayList<byte[]>> connRefBytes) throws Exception {
 
         try {
 
@@ -72,11 +85,11 @@ public class MysqlConnection {
 
         byte[] packet = Packet.read_packet(this.mysqlIn);
         int c = 0;
-        for(ArrayList<byte[]> buf : connRefBytes){
+        for (ArrayList<byte[]> buf : connRefBytes) {
             //logger.info("connRefBytes : "+new String(buf.get(0)));
             Packet.write(this.mysqlOut, buf);
 
-            if(c>0){
+            if (c > 0) {
 
                 boolean bufferResultSet = false;
                 OutputStream clientOut = new ByteArrayOutputStream();
@@ -93,7 +106,7 @@ public class MysqlConnection {
                         this.buffer = Packet.read_full_result_set(this.mysqlIn, clientOut, this.buffer, bufferResultSet);
                         break;
                 }
-            }else{
+            } else {
                 packet = Packet.read_packet(this.mysqlIn);
                 this.buffer = new ArrayList<byte[]>();
                 this.buffer.add(packet);

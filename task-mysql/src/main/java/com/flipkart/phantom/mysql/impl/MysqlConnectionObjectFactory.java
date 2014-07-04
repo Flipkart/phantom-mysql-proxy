@@ -1,3 +1,19 @@
+/*
+ * Copyright 2012-2015, the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.flipkart.phantom.mysql.impl;
 
 import org.apache.commons.pool.PoolableObjectFactory;
@@ -14,39 +30,41 @@ import java.util.ArrayList;
  * @author samaitra
  * @version 1.0
  * @date : 16/11/13
- *
  */
 public class MysqlConnectionObjectFactory implements PoolableObjectFactory<MysqlConnection> {
 
-    /** Mysql Proxy instance for initializing the Factory */
+    /**
+     * Mysql Proxy instance for initializing the Factory
+     */
     private MysqlProxy mysqlProxy;
-
 
     private ArrayList<ArrayList<byte[]>> connRefBytes;
 
     /**
      * Constructor for initializing this Factory with a MysqlProxy
-     *
      */
-    public MysqlConnectionObjectFactory(MysqlProxy mysqlProxy,ArrayList<ArrayList<byte[]>> connRefBytes) {
+    public MysqlConnectionObjectFactory(MysqlProxy mysqlProxy, ArrayList<ArrayList<byte[]>> connRefBytes) {
         this.setMysqlProxy(mysqlProxy);
         this.setConnRefBytes(connRefBytes);
     }
 
-
-    /** Logger for this class*/
+    /**
+     * Logger for this class
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(MysqlConnectionObjectFactory.class);
 
     /**
      * Interface method implementation. Creates and returns a new {@link com.flipkart.phantom.mysql.impl.MysqlConnection}
+     *
      * @see org.apache.commons.pool.PoolableObjectFactory#makeObject()
      */
     public MysqlConnection makeObject() throws Exception {
-       return new MysqlConnection(mysqlProxy.getHost(),mysqlProxy.getPort(),this.connRefBytes);
+        return new MysqlConnection(mysqlProxy.getHost(), mysqlProxy.getPort(), this.connRefBytes);
     }
 
     /**
      * Interface method implementation. Closes the specified Mysql socket instance
+     *
      * @see org.apache.commons.pool.PoolableObjectFactory#destroyObject(Object)
      */
 
@@ -60,6 +78,7 @@ public class MysqlConnectionObjectFactory implements PoolableObjectFactory<Mysql
     /**
      * Interface method implementation. Checks if the socket is open and then attempts to set Mysql specific socket properties.
      * An error in any of these operations will invalidate the specified Mysql Socket.
+     *
      * @see org.apache.commons.pool.PoolableObjectFactory#validateObject(Object)
      */
     public boolean validateObject(MysqlConnection conn) {
@@ -78,6 +97,7 @@ public class MysqlConnectionObjectFactory implements PoolableObjectFactory<Mysql
 
     /**
      * Interface method implementation. Does nothing
+     *
      * @see org.apache.commons.pool.PoolableObjectFactory#activateObject(Object)
      */
     public void activateObject(MysqlConnection conn) throws Exception {
@@ -86,14 +106,16 @@ public class MysqlConnectionObjectFactory implements PoolableObjectFactory<Mysql
 
     /**
      * Interface method implementation. Does nothing
+     *
      * @see org.apache.commons.pool.PoolableObjectFactory#passivateObject(Object)
      */
     public void passivateObject(MysqlConnection conn) throws Exception {
         // no op
     }
 
-
-    /** Getter/Setter Methods */
+    /**
+     * Getter/Setter Methods
+     */
 
     public MysqlProxy getMysqlProxy() {
         return mysqlProxy;

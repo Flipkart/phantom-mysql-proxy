@@ -1,21 +1,36 @@
+/*
+ * Copyright 2012-2015, the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.flipkart.phantom.mysql.impl;
+
+import com.flipkart.phantom.task.spi.AbstractHandler;
+import com.flipkart.phantom.task.spi.TaskContext;
+import com.github.mpjct.jmpjct.mysql.proto.Com_Query;
+import com.github.mpjct.jmpjct.mysql.proto.Packet;
+import org.apache.commons.pool.impl.GenericObjectPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.pool.impl.GenericObjectPool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.flipkart.phantom.task.spi.AbstractHandler;
-import com.flipkart.phantom.task.spi.TaskContext;
-import com.github.mpjct.jmpjct.mysql.proto.Com_Query;
-import com.github.mpjct.jmpjct.mysql.proto.Packet;
-
 /**
- /**
+ * /**
  * Abstract class for handling Mysql proxy requests
  *
  * @author : samaitra
@@ -60,55 +75,55 @@ public abstract class MysqlProxy extends AbstractHandler {
     ArrayList<byte[]> buffer;
     Connection conn = null;
 
-    /** Properties for initializing Generic Object Pool */
+    /**
+     * Properties for initializing Generic Object Pool
+     */
     private int poolSize;
     private long maxWait;
     private int maxIdle = poolSize;
-    private int minIdle = poolSize/2;
+    private int minIdle = poolSize / 2;
     private long timeBetweenEvictionRunsMillis;
 
-    /** The GenericObjectPool object */
+    /**
+     * The GenericObjectPool object
+     */
     private GenericObjectPool<MysqlConnection> mysqlConnectionPool;
 
-
-    /** The Mysql Connection pool map */
-    private ConcurrentHashMap<String,GenericObjectPool<MysqlConnection>> mysqlConnectionPoolMap = new ConcurrentHashMap<String, GenericObjectPool<MysqlConnection>>();
-
+    /**
+     * The Mysql Connection pool map
+     */
+    private ConcurrentHashMap<String, GenericObjectPool<MysqlConnection>> mysqlConnectionPoolMap = new ConcurrentHashMap<String, GenericObjectPool<MysqlConnection>>();
 
     @Override
     public void init(TaskContext context) throws Exception {
-
     }
 
     @Override
     public void shutdown(TaskContext context) throws Exception {
-
     }
 
-
-    public void initConnectionPool(String connectionPoolKey, ArrayList<ArrayList<byte[]>> connRefBytes){
+    public void initConnectionPool(String connectionPoolKey, ArrayList<ArrayList<byte[]>> connRefBytes) {
 
         //Create pool
         this.mysqlConnectionPool = new GenericObjectPool<MysqlConnection>(
-                new MysqlConnectionObjectFactory(this,connRefBytes),
+                new MysqlConnectionObjectFactory(this, connRefBytes),
                 this.poolSize,
                 GenericObjectPool.WHEN_EXHAUSTED_GROW,
-                this.maxWait ,
-                this.maxIdle ,
-                this.minIdle , false, false,
+                this.maxWait,
+                this.maxIdle,
+                this.minIdle, false, false,
                 this.timeBetweenEvictionRunsMillis,
                 GenericObjectPool.DEFAULT_NUM_TESTS_PER_EVICTION_RUN,
                 GenericObjectPool.DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS,
                 true);
 
         // Add connection pool object in mysql connection pool map.
-        this.mysqlConnectionPoolMap.put(connectionPoolKey,this.mysqlConnectionPool);
+        this.mysqlConnectionPoolMap.put(connectionPoolKey, this.mysqlConnectionPool);
     }
 
     /**
      * The main method which makes the Mysql request
      */
-
     public InputStream doRequest(MysqlRequestWrapper mysqlRequestWrapper) throws Exception {
 
 
@@ -118,8 +133,8 @@ public abstract class MysqlProxy extends AbstractHandler {
         //extracting user credentials as key for mysql connection pool map.
         String connectionPoolKey = new String(connRefBytes.get(0).get(0));
 
-        if(this.mysqlConnectionPoolMap.get(connectionPoolKey) == null){
-            initConnectionPool(connectionPoolKey,connRefBytes);
+        if (this.mysqlConnectionPoolMap.get(connectionPoolKey) == null) {
+            initConnectionPool(connectionPoolKey, connRefBytes);
         }
 
         MysqlConnection mysqlConnection = this.mysqlConnectionPoolMap.get(connectionPoolKey).borrowObject();
@@ -127,7 +142,6 @@ public abstract class MysqlProxy extends AbstractHandler {
 
         //logger.info("Query to mysql from proxy :" + query);
         Packet.write(mysqlConnection.mysqlOut, buffer);
-
         return mysqlConnection.mysqlIn;
     }
 
@@ -135,7 +149,7 @@ public abstract class MysqlProxy extends AbstractHandler {
     /**
      * Abstract fallback request method
      *
-     * @param mysqlRequestWrapper  Mysql request
+     * @param mysqlRequestWrapper Mysql request
      * @return ResultSet response after executing the fallback
      */
     public abstract InputStream fallbackRequest(MysqlRequestWrapper mysqlRequestWrapper);
@@ -197,7 +211,6 @@ public abstract class MysqlProxy extends AbstractHandler {
     /**
      * getters / setters
      */
-
     public int getPort() {
         return port;
     }
@@ -213,7 +226,6 @@ public abstract class MysqlProxy extends AbstractHandler {
     public void setHost(String host) {
         this.host = host;
     }
-
 
     public void setName(String name) {
         this.name = name;
@@ -274,7 +286,6 @@ public abstract class MysqlProxy extends AbstractHandler {
     public void setTimeBetweenEvictionRunsMillis(long timeBetweenEvictionRunsMillis) {
         this.timeBetweenEvictionRunsMillis = timeBetweenEvictionRunsMillis;
     }
-
     /** getters / setters */
 
 
