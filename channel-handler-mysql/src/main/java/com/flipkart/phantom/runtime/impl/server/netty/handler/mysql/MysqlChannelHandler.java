@@ -420,59 +420,44 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
     /**
      * Start Getter/Setter methods
      */
-
     public ChannelGroup getDefaultChannelGroup() {
         return this.defaultChannelGroup;
     }
-
     public void setDefaultChannelGroup(ChannelGroup defaultChannelGroup) {
         this.defaultChannelGroup = defaultChannelGroup;
     }
-
     public ExecutorRepository getRepository() {
         return this.repository;
     }
-
     public void setRepository(ExecutorRepository repository) {
         this.repository = repository;
     }
-
     public Map<String, String> getProxyMap() {
         return this.proxyMap;
     }
-
     public void setProxyMap(Map<String, String> proxyMap) {
         this.proxyMap = proxyMap;
     }
-
     public String getDefaultProxy() {
         return this.defaultProxy;
     }
-
     public void setDefaultProxy(String defaultProxy) {
         this.defaultProxy = defaultProxy;
     }
-
     public void setEventProducer(ServiceProxyEventProducer eventProducer) {
         this.eventProducer = eventProducer;
-
     }
-
     public String getHost() {
         return host;
     }
-
     public void setHost(String host) {
         this.host = host;
     }
-
     public int getPort() {
         return port;
     }
-
     public void setPort(int port) {
         this.port = port;
     }
-
     /** End Getter/Setter methods */
 }
