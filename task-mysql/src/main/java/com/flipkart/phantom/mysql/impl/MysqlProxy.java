@@ -132,8 +132,8 @@ public abstract class MysqlProxy extends AbstractHandler {
 
         //extracting user credentials as key for mysql connection pool map.
         String connectionPoolKey = new String(connRefBytes.get(0).get(0));
-
         if (this.mysqlConnectionPoolMap.get(connectionPoolKey) == null) {
+
             initConnectionPool(connectionPoolKey, connRefBytes);
         }
 

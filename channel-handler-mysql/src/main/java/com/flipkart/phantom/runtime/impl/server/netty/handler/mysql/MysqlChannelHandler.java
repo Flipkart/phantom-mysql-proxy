@@ -323,29 +323,31 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
 
     private InputStream executeQueries(ChannelHandlerContext ctx, int flag, ArrayList<byte[]> buffer) throws Exception {
 
-        if (this.count < 7) {
+//
+//        if (this.count < 7) {
+//
+//            /* Adding client connection queries buffer to connRefBytes. This object will be forwarded to
+//            to Mysql proxy to establish the connection and validate the client credentials before forwarding the
+//            queries to mysql server
+//            */
+//            this.connRefBytes.add(buffer);
+//            Packet.write(this.mysqlOut, buffer);
+//            return this.mysqlIn;
+//
+//
+//        } else {
+//            if (this.count == 7) {
+//            /* closing the local {@link MysqlChannelHandler} mysql socket connection.
+//             This connection is required to obtain the connection reference keys so that
+//             the keys and subsequent queries can be forwarded to the mysql proxy.
+//            */
+//                closeConnection();
+//                return forwardRequests(ctx, flag, buffer);
+//            } else {
 
-            /* Adding client connection queries buffer to connRefBytes. This object will be forwarded to
-            to Mysql proxy to establish the connection and validate the client credentials before forwarding the
-            queries to mysql server
-            */
-            this.connRefBytes.add(buffer);
-            Packet.write(this.mysqlOut, buffer);
-            return this.mysqlIn;
-
-
-        } else {
-            if (this.count == 7) {
-            /* closing the local {@link MysqlChannelHandler} mysql socket connection.
-             This connection is required to obtain the connection reference keys so that
-             the keys and subsequent queries can be forwarded to the mysql proxy.
-            */
-                closeConnection();
                 return forwardRequests(ctx, flag, buffer);
-            } else {
-                return forwardRequests(ctx, flag, buffer);
-            }
-        }
+//            }
+//        }
 
 
     }

@@ -36,43 +36,64 @@ public class MysqlClient {
     Connection conn = null;
 
     @Test
-    public void MysqlTest() throws Exception {
+    public void mysqlTest() throws Exception {
 
 
         String dburl = "jdbc:mysql://localhost:8080/mydb?characterEncoding=utf8&user=root&password=";
         Class.forName("com.mysql.jdbc.Driver").newInstance();
+
         conn = DriverManager.getConnection(dburl);
-        PreparedStatement ps = conn.prepareStatement("Insert into mytable(t_title,t_author,submission_date) values('mysql_proxy','saikat',now())");
-        ps.execute();
-        ps = conn.prepareStatement("select * from mytable where t_author='saikat'");
-        ResultSet rs = ps.executeQuery();
+        String sql1 = "Insert into mytable(t_title,t_author,submission_date) values('mysql_proxy','saikat',now())";
+        System.out.println("sql1 "+ sql1);
+        PreparedStatement ps1 = conn.prepareStatement(sql1);
+        ps1.execute();
+
+        String sql2 = "select * from mytable where t_author='saikat'";
+        System.out.println("sql2 "+sql2);
+        PreparedStatement ps2 = conn.prepareStatement(sql2);
+        ResultSet rs = ps2.executeQuery();
 
         if (rs.next()) {
             Assert.assertEquals("mysql_proxy", rs.getString(1));
             Assert.assertEquals("saikat", rs.getString(2));
             Assert.assertNotNull(rs.getString(3));
-            System.out.println("INSERT OUTPUT - t_author : " + rs.getString(1));
-
-        }
-        ps = conn.prepareStatement("update mytable set t_author='dummy' where t_author='saikat'");
-        ps.execute();
-        ps = conn.prepareStatement("select * from mytable where t_author='dummy'");
-        rs = ps.executeQuery();
-
-        while (rs.next()) {
-            Assert.assertEquals("mysql_proxy", rs.getString(1));
-            Assert.assertEquals("dummy", rs.getString(2));
-            Assert.assertNotNull(rs.getString(3));
-            System.out.println("UPDATE OUTPUT - t_author : " + rs.getString(1));
+           // System.out.println("INSERT OUTPUT - t_author : " + rs.getString(1));
 
         }
         rs.close();
-        ps = conn.prepareStatement("delete from mytable");
-        ps.execute();
-        ps.close();
+        System.out.println();
+        String sql3 = "update mytable set t_author='dummy' where t_author='saikat'";
+        System.out.println("sql3 "+sql3);
+
+        PreparedStatement ps3 = conn.prepareStatement(sql3);
+        ps3.execute();
+
+        String sql4 = "select * from mytable where t_author='dummy'";
+        System.out.println(sql4);
+
+        PreparedStatement ps4 = conn.prepareStatement(sql4);
+        ResultSet rs2 = ps4.executeQuery();
+
+        while (rs2.next()) {
+            Assert.assertEquals("mysql_proxy", rs2.getString(1));
+            Assert.assertEquals("dummy", rs2.getString(2));
+            Assert.assertNotNull(rs2.getString(3));
+           // System.out.println("UPDATE OUTPUT - t_author : " + rs2.getString(2));
+
+        }
+        rs2.close();
+
+        String sql5 = "delete from mytable";
+        System.out.println(sql5);
+
+        PreparedStatement ps5 = conn.prepareStatement(sql5);
+        ps5.execute();
+        ps5.close();
         conn.close();
 
     }
+
+
 }
 
 

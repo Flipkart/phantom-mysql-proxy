@@ -86,10 +86,10 @@ public class MysqlConnection {
         byte[] packet = Packet.read_packet(this.mysqlIn);
         int c = 0;
         for (ArrayList<byte[]> buf : connRefBytes) {
-            //logger.info("connRefBytes : "+new String(buf.get(0)));
             Packet.write(this.mysqlOut, buf);
 
             if (c > 0) {
+
 
                 boolean bufferResultSet = false;
                 OutputStream clientOut = new ByteArrayOutputStream();
