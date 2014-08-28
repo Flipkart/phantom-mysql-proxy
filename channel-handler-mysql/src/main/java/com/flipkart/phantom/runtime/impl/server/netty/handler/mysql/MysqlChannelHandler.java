@@ -158,7 +158,7 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
      */
     private Executor executor;
 
-    /** Adding client auth credentials buffer to connRefBytes. This object will be forwarded to
+    /** Adding client auth credentials. This object will be forwarded to
      *  to Mysql proxy to establish the connection and validate the client credentials before forwarding
      *  the queries to mysql server. This also helps in identifying correct mysql connection object in
      *  mysql connection pool.
