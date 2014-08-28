@@ -57,20 +57,58 @@ public class MysqlConnection {
      */
     public OutputStream mysqlOut = null;
 
+    /**
+     * Mysql packet size
+     */
+    private static final int MYSQL_PACKET_SIZE = 16384;
+    /**
+     * @param  connectionTime
+     *         An <tt>int</tt> expressing the relative importance of a short
+     *         connection time
+     *
+     * @param  latency
+     *         An <tt>int</tt> expressing the relative importance of low
+     *         latency
+     *
+     * @param  bandwidth
+     *         An <tt>int</tt> expressing the relative importance of high
+     *         bandwidth
+     */
+    private static final int connectionTime = 0;
+    private static final int latency = 2;
+    private static final int bandwidth = 1;
+
+    /**
+     * IP traffic class.
+     * RFC 1349 defines the TOS values as follows:
+     * <p>
+     * <UL>
+     * <LI><CODE>IPTOS_LOWCOST (0x02)</CODE></LI>
+     * <LI><CODE>IPTOS_RELIABILITY (0x04)</CODE></LI>
+     * <LI><CODE>IPTOS_THROUGHPUT (0x08)</CODE></LI>
+     * <LI><CODE>IPTOS_LOWDELAY (0x10)</CODE></LI>
+     * </UL>
+     *
+     */
+    private final static int tc = 0x10;
+
     ArrayList<byte[]> buffer;
+
+    /**
+     * Mysql packet sequence Id.
+     */
     private long sequenceId;
 
-    public MysqlConnection(String host, int port, ArrayList<ArrayList<byte[]>> connRefBytes) throws Exception {
+    public MysqlConnection(String host, int port, ArrayList<ArrayList<byte[]>> userCredentials) throws Exception {
 
         try {
 
             this.mysqlSocket = new Socket(host, port);
-            this.mysqlSocket.setPerformancePreferences(0, 2, 1);
+            this.mysqlSocket.setPerformancePreferences(connectionTime, latency, bandwidth);
             this.mysqlSocket.setTcpNoDelay(true);
-            this.mysqlSocket.setTrafficClass(0x10);
+            this.mysqlSocket.setTrafficClass(tc);
             this.mysqlSocket.setKeepAlive(true);
-            //logger.info("Connected to mysql server at "+host+":"+port);
-            this.mysqlIn = new BufferedInputStream(this.mysqlSocket.getInputStream(), 16384);
+            this.mysqlIn = new BufferedInputStream(this.mysqlSocket.getInputStream(), MYSQL_PACKET_SIZE);
             this.mysqlOut = this.mysqlSocket.getOutputStream();
 
         } catch (Exception e) {
@@ -84,7 +122,7 @@ public class MysqlConnection {
 
         byte[] packet = Packet.read_packet(this.mysqlIn);
 
-        for (ArrayList<byte[]> buf : connRefBytes) {
+        for (ArrayList<byte[]> buf : userCredentials) {
             Packet.write(this.mysqlOut, buf);
 
                 packet = Packet.read_packet(this.mysqlIn);

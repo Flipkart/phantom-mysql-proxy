@@ -90,7 +90,9 @@ public abstract class MysqlProxy extends AbstractHandler {
     private GenericObjectPool<MysqlConnection> mysqlConnectionPool;
 
     /**
-     * The Mysql Connection pool map
+     * The Mysql Connection pool map. This hashmap provides correct connection object
+     * from mysql connection pool when multiple user with different credentials uses the
+     * mysql proxy.
      */
     private ConcurrentHashMap<Integer, GenericObjectPool<MysqlConnection>> mysqlConnectionPoolMap = new ConcurrentHashMap<Integer, GenericObjectPool<MysqlConnection>>();
 
@@ -102,11 +104,11 @@ public abstract class MysqlProxy extends AbstractHandler {
     public void shutdown(TaskContext context) throws Exception {
     }
 
-    public void initConnectionPool(ArrayList<ArrayList<byte[]>> connRefBytes) {
+    public void initConnectionPool(ArrayList<ArrayList<byte[]>> userCredentials) {
 
         //Create pool
         this.mysqlConnectionPool = new GenericObjectPool<MysqlConnection>(
-                new MysqlConnectionObjectFactory(this, connRefBytes),
+                new MysqlConnectionObjectFactory(this, userCredentials),
                 this.poolSize,
                 GenericObjectPool.WHEN_EXHAUSTED_GROW,
                 this.maxWait,
@@ -118,11 +120,11 @@ public abstract class MysqlProxy extends AbstractHandler {
                 true);
     }
 
-    public void initConnectionPool(Integer connectionPoolKey, ArrayList<ArrayList<byte[]>> connRefBytes) {
+    public void initConnectionPool(Integer connectionPoolKey, ArrayList<ArrayList<byte[]>> userCredentials) {
 
         //Create pool
         this.mysqlConnectionPool = new GenericObjectPool<MysqlConnection>(
-                new MysqlConnectionObjectFactory(this, connRefBytes),
+                new MysqlConnectionObjectFactory(this, userCredentials),
                 this.poolSize,
                 GenericObjectPool.WHEN_EXHAUSTED_GROW,
                 this.maxWait,
@@ -145,14 +147,14 @@ public abstract class MysqlProxy extends AbstractHandler {
     public InputStream doRequest(MysqlRequestWrapper mysqlRequestWrapper) throws Exception {
 
         ArrayList<byte[]> buffer = mysqlRequestWrapper.getBuffer();
-        ArrayList<ArrayList<byte[]>> connRefBytes = mysqlRequestWrapper.getConnRefBytes();
+        ArrayList<ArrayList<byte[]>> userCredentials = mysqlRequestWrapper.getUserCredentials();
 
         //generating connectionPoolKey for mysql connection pool map.
-        Integer connectionPoolKey = connRefBytes.hashCode();
+        Integer connectionPoolKey = userCredentials.hashCode();
 
         if (this.mysqlConnectionPoolMap.get(connectionPoolKey) == null) {
             logger.info("connectionPoolKey for connection "+connectionPoolKey);
-            initConnectionPool(connectionPoolKey, connRefBytes);
+            initConnectionPool(connectionPoolKey, userCredentials);
         }
 
         MysqlConnection mysqlConnection = this.mysqlConnectionPoolMap.get(connectionPoolKey).borrowObject();

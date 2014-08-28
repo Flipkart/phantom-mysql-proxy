@@ -42,9 +42,9 @@ public class MysqlRequestWrapper implements RequestWrapper {
     private ArrayList<byte[]> buffer;
 
     /**
-     * Mysql connection credentials
+     * Mysql user credentials
      */
-    private ArrayList<ArrayList<byte[]>> connRefBytes;
+    private ArrayList<ArrayList<byte[]>> userCredentials;
 
     /**
      * Mysql command key (type of sql query)
@@ -71,12 +71,12 @@ public class MysqlRequestWrapper implements RequestWrapper {
         this.buffer = buffer;
     }
 
-    public ArrayList<ArrayList<byte[]>> getConnRefBytes() {
-        return connRefBytes;
+    public ArrayList<ArrayList<byte[]>> getUserCredentials() {
+        return userCredentials;
     }
 
-    public void setConnRefBytes(ArrayList<ArrayList<byte[]>> connRefBytes) {
-        this.connRefBytes = connRefBytes;
+    public void setUserCredentials(ArrayList<ArrayList<byte[]>> userCredentials) {
+        this.userCredentials = userCredentials;
     }
 
     public String getCommandKey() {

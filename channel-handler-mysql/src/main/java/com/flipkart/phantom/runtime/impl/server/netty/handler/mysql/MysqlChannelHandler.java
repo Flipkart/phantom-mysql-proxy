@@ -50,17 +50,17 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
 
 
     /**
-     * Host to connect to
+     * Mysql server Host to connect to
      */
     public String host;
 
     /**
-     * port to connect to
+     * Mysql server port to connect to
      */
     public int port;
 
     /**
-     * mysql socket to connect mysql server
+     * Mysql socket for the connection
      */
     public Socket mysqlSocket = null;
 
@@ -125,18 +125,80 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
     private ArrayList<byte[]> buffer;
 
     /**
-     * The response InputStream from mysql socket
+     * The response InputStream from mysql connection socket
      */
     private InputStream in = null;
+
+    /**
+     * Mysql query sent from client.
+     */
     private String query;
+
+    /**
+     * Hystrix command key that is being passed to proxy.
+     * This is the CRUD command operation being sent to proxy.
+     */
     private String commandKey;
+    /**
+     * A boolean variable to toggle to check if additional response buffer is present
+     *
+     */
     public boolean bufferResultSet = true;
+    /**
+     * Mysql packet sequence id
+     */
     private long sequenceId;
+    /**
+     * Mysql database schema information
+     */
     private String schema;
+
+    /**
+     * Mysql proxy executor.
+     */
     private Executor executor;
-    private String proxy;
-    private int count = 0;
-    private ArrayList<ArrayList<byte[]>> connRefBytes = new ArrayList<ArrayList<byte[]>>();
+
+    /** Adding client auth credentials buffer to connRefBytes. This object will be forwarded to
+     *  to Mysql proxy to establish the connection and validate the client credentials before forwarding
+     *  the queries to mysql server. This also helps in identifying correct mysql connection object in
+     *  mysql connection pool.
+     */
+    private ArrayList<ArrayList<byte[]>> userCredentials = new ArrayList<ArrayList<byte[]>>();
+
+    /**
+     * Mysql packet size
+     */
+    private static final int MYSQL_PACKET_SIZE = 16384;
+    /**
+    * @param  connectionTime
+    *         An <tt>int</tt> expressing the relative importance of a short
+    *         connection time
+    *
+            * @param  latency
+    *         An <tt>int</tt> expressing the relative importance of low
+    *         latency
+    *
+            * @param  bandwidth
+    *         An <tt>int</tt> expressing the relative importance of high
+    *         bandwidth
+    */
+    private static final int connectionTime = 0;
+    private static final int latency = 2;
+    private static final int bandwidth = 1;
+
+    /**
+     * IP traffic class.
+     * RFC 1349 defines the TOS values as follows:
+     * <p>
+     * <UL>
+     * <LI><CODE>IPTOS_LOWCOST (0x02)</CODE></LI>
+     * <LI><CODE>IPTOS_RELIABILITY (0x04)</CODE></LI>
+     * <LI><CODE>IPTOS_THROUGHPUT (0x08)</CODE></LI>
+     * <LI><CODE>IPTOS_LOWDELAY (0x10)</CODE></LI>
+     * </UL>
+     *
+     */
+     private final static int tc = 0x10;
 
     /**
      * Interface method implementation. Checks if all mandatory properties have been set
@@ -163,7 +225,7 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
 
 
         if (this.flag == Flags.MODE_INIT) {
-            this.in = execute(ctx, this.flag);
+            this.in = initConnection(ctx, this.flag);
             writeServerHandshake(ctx, event, this.in);
         }
 
@@ -179,14 +241,9 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
         } else {
             handleQueries(ctx, messageEvent);
         }
-
-         /* Increment count to keep track of connection customs.
-         * There are 7 customary queries being fired by MysqlClient before connection can be established.
-         */
-        this.count++;
     }
 
-    private InputStream execute(ChannelHandlerContext ctx, int flag) throws Exception {
+    private InputStream initConnection(ChannelHandlerContext ctx, int flag) throws Exception {
 
         /*
         Need to create a socket connection in the handler to establish successful authentication ritual with mysql server.
@@ -195,13 +252,17 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
         */
 
         this.mysqlSocket = new Socket(this.host, this.port);
-        this.mysqlSocket.setPerformancePreferences(0, 2, 1);
+        /**
+        * The application prefers high bandwidth above low
+        * latency, and low latency above short connection time
+        */
+        this.mysqlSocket.setPerformancePreferences(connectionTime, latency, bandwidth);
         this.mysqlSocket.setTcpNoDelay(true);
-        this.mysqlSocket.setTrafficClass(0x10);
+        this.mysqlSocket.setTrafficClass(tc);
         this.mysqlSocket.setKeepAlive(true);
 
         //LOGGER.info("Connected to mysql server at "+this.host+":"+this.port);
-        this.mysqlIn = new BufferedInputStream(this.mysqlSocket.getInputStream(), 16384);
+        this.mysqlIn = new BufferedInputStream(this.mysqlSocket.getInputStream(), MYSQL_PACKET_SIZE);
         this.mysqlOut = this.mysqlSocket.getOutputStream();
         return this.mysqlIn;
     }
@@ -242,17 +303,14 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
         response.removeCapabilityFlag(Flags.CLIENT_SSL);
         response.removeCapabilityFlag(Flags.CLIENT_LOCAL_FILES);
         
-        /* Adding client auth request buffer to connRefBytes. This object will be forwarded to
-           to Mysql proxy to establish the connection and validate the client credentials before forwarding the
-           queries to mysql server
-        */
-        this.connRefBytes.add(this.buffer);
-        this.in = executeAuth(ctx, Flags.MODE_SEND_AUTH, this.buffer);
+
+        this.userCredentials.add(this.buffer);
+        this.in = authenticate(ctx, Flags.MODE_SEND_AUTH, this.buffer);
         writeAuthResponse(ctx, messageEvent, this.in);
 
     }
 
-    private InputStream executeAuth(ChannelHandlerContext ctx, int flag, ArrayList<byte[]> buffer) throws Exception {
+    private InputStream authenticate(ChannelHandlerContext ctx, int flag, ArrayList<byte[]> buffer) throws Exception {
 
 
         switch (flag) {
@@ -326,7 +384,7 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
         MysqlRequestWrapper executorMysqlRequest = new MysqlRequestWrapper();
         executorMysqlRequest.setFlag(flag);
         executorMysqlRequest.setBuffer(buffer);
-        executorMysqlRequest.setConnRefBytes(this.connRefBytes);
+        executorMysqlRequest.setUserCredentials(this.userCredentials);
         this.commandKey = getQueryCommand(this.query);
         executorMysqlRequest.setCommandKey(this.commandKey);
         String proxy = this.proxyMap.get(MysqlChannelHandler.ALL_ROUTES);
@@ -374,6 +432,12 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
         super.exceptionCaught(ctx, event);
     }
 
+    /**
+     * A utility method to identify Hystrix command key or in other words the CRUD Mysql operations.
+     * @param query Mysql query from client
+     * @return
+     */
+
     private String getQueryCommand(String query) {
         query = query.trim();
         int i = query.indexOf(' ');
@@ -382,6 +446,11 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
         return command;
     }
 
+    /**
+     * Closes local Mysql connection socket and I/O streams in case of exception in Netty Channels or
+     * client sends a connection close request
+     * @throws Exception
+     */
     private void closeConnection() throws Exception {
 
         this.mysqlSocket.close();

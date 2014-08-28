@@ -38,6 +38,17 @@ import java.util.ArrayList;
  */
 public class MysqlNettyChannelBuffer extends Packet {
 
+    /**
+     * size of a command packet that the
+     * client intends to send to the server.
+     */
+    private final static int PACKED_PACKET_SIZE = 65535;
+
+    /**
+     * Current reader offset in the buffer.
+     * */
+    private static int offset = 0;
+
     @Override
     public ArrayList<byte[]> getPayload() {
         return null;
@@ -66,9 +77,9 @@ public class MysqlNettyChannelBuffer extends Packet {
             }
         }
 
-        int packedPacketSize = 65535;
-        byte[] packedPacket = new byte[packedPacketSize];
-        int position = 0;
+
+        byte[] packedPacket = new byte[PACKED_PACKET_SIZE];
+        int position = offset;
 
         while (true) {
             packet = Packet.read_packet(in);
@@ -81,15 +92,15 @@ public class MysqlNettyChannelBuffer extends Packet {
 
             if (packetType == Flags.EOF || packetType == Flags.ERR) {
                 byte[] newPackedPacket = new byte[position];
-                System.arraycopy(packedPacket, 0, newPackedPacket, 0, position);
+                System.arraycopy(packedPacket, offset, newPackedPacket, offset, position);
                 buffer.add(newPackedPacket);
                 packedPacket = packet;
                 break;
             }
 
-            if (position + packet.length > packedPacketSize) {
-                int subsize = packedPacketSize - position;
-                System.arraycopy(packet, 0, packedPacket, position, subsize);
+            if (position + packet.length > PACKED_PACKET_SIZE) {
+                int subsize = PACKED_PACKET_SIZE - position;
+                System.arraycopy(packet, offset, packedPacket, position, subsize);
                 buffer.add(packedPacket);
 
                 if (!bufferResultSet) {
@@ -97,12 +108,12 @@ public class MysqlNettyChannelBuffer extends Packet {
                     buffer.clear();
                 }
 
-                packedPacket = new byte[packedPacketSize];
-                position = 0;
+                packedPacket = new byte[PACKED_PACKET_SIZE];
+                position = offset;
                 System.arraycopy(packet, subsize, packedPacket, position, packet.length - subsize);
                 position += packet.length - subsize;
             } else {
-                System.arraycopy(packet, 0, packedPacket, position, packet.length);
+                System.arraycopy(packet, offset, packedPacket, position, packet.length);
                 position += packet.length;
             }
         }
