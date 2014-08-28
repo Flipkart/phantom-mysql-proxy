@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -84,29 +83,10 @@ public class MysqlConnection {
         */
 
         byte[] packet = Packet.read_packet(this.mysqlIn);
-        int c = 0;
+
         for (ArrayList<byte[]> buf : connRefBytes) {
             Packet.write(this.mysqlOut, buf);
 
-            if (c > 0) {
-
-
-                boolean bufferResultSet = false;
-                OutputStream clientOut = new ByteArrayOutputStream();
-                packet = Packet.read_packet(this.mysqlIn);
-                this.buffer.add(packet);
-                this.sequenceId = Packet.getSequenceId(packet);
-
-                switch (Packet.getType(packet)) {
-                    case Flags.OK:
-                    case Flags.ERR:
-                        break;
-
-                    default:
-                        this.buffer = Packet.read_full_result_set(this.mysqlIn, clientOut, this.buffer, bufferResultSet);
-                        break;
-                }
-            } else {
                 packet = Packet.read_packet(this.mysqlIn);
                 this.buffer = new ArrayList<byte[]>();
                 this.buffer.add(packet);
@@ -115,8 +95,7 @@ public class MysqlConnection {
                     logger.debug("Auth is not okay!");
                 }
             }
-            c++;
 
         }
-    }
 }
+

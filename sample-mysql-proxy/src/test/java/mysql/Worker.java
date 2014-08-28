@@ -18,7 +18,7 @@ import java.sql.ResultSet;
 
             try {
 
-                String dburl = "jdbc:mysql://localhost:8080/mydb?characterEncoding=utf8&user=root&password=";
+                String dburl = "jdbc:mysql://localhost:8080/mydb?user=saikat&password=saikat";
                 Class.forName("com.mysql.jdbc.Driver").newInstance();
                 Connection conn = DriverManager.getConnection(dburl);
 

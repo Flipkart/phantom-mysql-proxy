@@ -78,11 +78,11 @@ public abstract class MysqlProxy extends AbstractHandler {
     /**
      * Properties for initializing Generic Object Pool
      */
-    private int poolSize;
-    private long maxWait;
+    private int poolSize = 10;
+    private long maxWait = 100;
     private int maxIdle = poolSize;
     private int minIdle = poolSize / 2;
-    private long timeBetweenEvictionRunsMillis;
+    private long timeBetweenEvictionRunsMillis = 20000;
 
     /**
      * The GenericObjectPool object
@@ -92,7 +92,7 @@ public abstract class MysqlProxy extends AbstractHandler {
     /**
      * The Mysql Connection pool map
      */
-    private ConcurrentHashMap<String, GenericObjectPool<MysqlConnection>> mysqlConnectionPoolMap = new ConcurrentHashMap<String, GenericObjectPool<MysqlConnection>>();
+    private ConcurrentHashMap<Integer, GenericObjectPool<MysqlConnection>> mysqlConnectionPoolMap = new ConcurrentHashMap<Integer, GenericObjectPool<MysqlConnection>>();
 
     @Override
     public void init(TaskContext context) throws Exception {
@@ -102,7 +102,23 @@ public abstract class MysqlProxy extends AbstractHandler {
     public void shutdown(TaskContext context) throws Exception {
     }
 
-    public void initConnectionPool(String connectionPoolKey, ArrayList<ArrayList<byte[]>> connRefBytes) {
+    public void initConnectionPool(ArrayList<ArrayList<byte[]>> connRefBytes) {
+
+        //Create pool
+        this.mysqlConnectionPool = new GenericObjectPool<MysqlConnection>(
+                new MysqlConnectionObjectFactory(this, connRefBytes),
+                this.poolSize,
+                GenericObjectPool.WHEN_EXHAUSTED_GROW,
+                this.maxWait,
+                this.maxIdle,
+                this.minIdle, false, false,
+                this.timeBetweenEvictionRunsMillis,
+                GenericObjectPool.DEFAULT_NUM_TESTS_PER_EVICTION_RUN,
+                GenericObjectPool.DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS,
+                true);
+    }
+
+    public void initConnectionPool(Integer connectionPoolKey, ArrayList<ArrayList<byte[]>> connRefBytes) {
 
         //Create pool
         this.mysqlConnectionPool = new GenericObjectPool<MysqlConnection>(
@@ -121,30 +137,31 @@ public abstract class MysqlProxy extends AbstractHandler {
         this.mysqlConnectionPoolMap.put(connectionPoolKey, this.mysqlConnectionPool);
     }
 
+
+
     /**
      * The main method which makes the Mysql request
      */
     public InputStream doRequest(MysqlRequestWrapper mysqlRequestWrapper) throws Exception {
 
-
         ArrayList<byte[]> buffer = mysqlRequestWrapper.getBuffer();
         ArrayList<ArrayList<byte[]>> connRefBytes = mysqlRequestWrapper.getConnRefBytes();
 
-        //extracting user credentials as key for mysql connection pool map.
-        String connectionPoolKey = new String(connRefBytes.get(0).get(0));
-        if (this.mysqlConnectionPoolMap.get(connectionPoolKey) == null) {
+        //generating connectionPoolKey for mysql connection pool map.
+        Integer connectionPoolKey = connRefBytes.hashCode();
 
+        if (this.mysqlConnectionPoolMap.get(connectionPoolKey) == null) {
+            logger.info("connectionPoolKey for connection "+connectionPoolKey);
             initConnectionPool(connectionPoolKey, connRefBytes);
         }
 
         MysqlConnection mysqlConnection = this.mysqlConnectionPoolMap.get(connectionPoolKey).borrowObject();
         String query = Com_Query.loadFromPacket(buffer.get(0)).query;
 
-        //logger.info("Query to mysql from proxy :" + query);
+        logger.info("Query to mysql from proxy :" + query);
         Packet.write(mysqlConnection.mysqlOut, buffer);
         return mysqlConnection.mysqlIn;
     }
-
 
     /**
      * Abstract fallback request method

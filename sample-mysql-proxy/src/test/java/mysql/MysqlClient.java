@@ -39,7 +39,7 @@ public class MysqlClient {
     public void mysqlTest() throws Exception {
 
 
-        String dburl = "jdbc:mysql://localhost:8080/mydb?characterEncoding=utf8&user=root&password=";
+        String dburl = "jdbc:mysql://localhost:8080/mydb?user=root&password=";
         Class.forName("com.mysql.jdbc.Driver").newInstance();
 
         conn = DriverManager.getConnection(dburl);
