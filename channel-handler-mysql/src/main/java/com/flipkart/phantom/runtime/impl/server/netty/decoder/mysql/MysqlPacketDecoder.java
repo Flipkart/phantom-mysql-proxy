@@ -45,7 +45,25 @@ public class MysqlPacketDecoder extends FrameDecoder {
     /**
      * Logger for this class
      */
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MysqlPacketDecoder.class);
+
+    /**
+     * Mysql header read size (length of compressed payload)
+     * {@link http://dev.mysql.com/doc/internals/en/compressed-packet-header.html}
+     */
+     private static final int HEADER_READ_SIZE = 3;
+
+    /**
+     * Mysql header size (length of compressed payload + compressed sequence id)
+     * {@link http://dev.mysql.com/doc/internals/en/compressed-packet-header.html}
+     */
+     private static final int HEADER_SIZE = 4;
+
+    /**
+     * Mysql packet OFFSET_MARKER. This is the index of first byte in the packet.
+     */
+     private static final int OFFSET_MARKER = 0;
 
     /**
      * Interface method implementation. Tries to read the Mysql protocol message. Returns null if unsuccessful, else returns the read byte array
@@ -55,13 +73,14 @@ public class MysqlPacketDecoder extends FrameDecoder {
     @Override
     protected Object decode(ChannelHandlerContext ctx, Channel channel, ChannelBuffer buf) throws Exception {
 
+
         InputStream in = new ChannelBufferInputStream(buf);
 
         int b = 0;
         int size = 0;
-        byte[] packet = new byte[3];
-        int offset = 0;
-        int target = 3;
+        byte[] packet = new byte[HEADER_READ_SIZE];
+        int offset = OFFSET_MARKER;
+        int target = HEADER_READ_SIZE;
 
         do {
             b = in.read(packet, offset, (target - offset));
@@ -74,8 +93,8 @@ public class MysqlPacketDecoder extends FrameDecoder {
         } while (offset != target);
 
         size = Packet.getSize(packet);
-        byte[] packet_tmp = new byte[size + 4];
-        System.arraycopy(packet, 0, packet_tmp, 0, 3);
+        byte[] packet_tmp = new byte[size + HEADER_SIZE];
+        System.arraycopy(packet, OFFSET_MARKER, packet_tmp, OFFSET_MARKER, HEADER_READ_SIZE);
         packet = packet_tmp;
         packet_tmp = null;
 
