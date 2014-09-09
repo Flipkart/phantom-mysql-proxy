@@ -155,6 +155,13 @@ public abstract class MysqlProxy extends AbstractHandler {
         if (this.mysqlConnectionPoolMap.get(connectionPoolKey) == null) {
             logger.info("connectionPoolKey for connection "+connectionPoolKey);
             initConnectionPool(connectionPoolKey, userCredentials);
+
+            for(ArrayList<byte[]> bytes:userCredentials){
+                for(byte[] b:bytes){
+                    logger.info("userCredentails "+new String(b));
+                }
+            }
+
         }
 
         MysqlConnection mysqlConnection = this.mysqlConnectionPoolMap.get(connectionPoolKey).borrowObject();

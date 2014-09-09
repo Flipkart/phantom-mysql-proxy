@@ -18,7 +18,6 @@ package com.flipkart.phantom.runtime.impl.server.netty.handler.mysql;
 
 import com.flipkart.phantom.event.ServiceProxyEventProducer;
 import com.flipkart.phantom.mysql.impl.MysqlProxyExecutor;
-import com.flipkart.phantom.mysql.impl.MysqlRequestWrapper;
 import com.flipkart.phantom.runtime.impl.server.netty.channel.mysql.MysqlNettyChannelBuffer;
 import com.flipkart.phantom.task.spi.Executor;
 import com.flipkart.phantom.task.spi.repository.ExecutorRepository;
@@ -380,7 +379,7 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
     }
 
     private InputStream executeQueries(ChannelHandlerContext ctx, int flag, ArrayList<byte[]> buffer) throws Exception {
-
+        /*
         MysqlRequestWrapper executorMysqlRequest = new MysqlRequestWrapper();
         executorMysqlRequest.setFlag(flag);
         executorMysqlRequest.setBuffer(buffer);
@@ -395,7 +394,10 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
             throw new RuntimeException("Error in reading server Queries Response :" + proxy + ".", e);
         }
         return this.in;
+        */
 
+        Packet.write(this.mysqlOut,buffer);
+        return this.mysqlIn;
     }
 
     private void writeQueryResponse(ChannelHandlerContext ctx, MessageEvent messageEvent, InputStream in) throws Exception {
@@ -429,7 +431,7 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
         LOGGER.warn("Exception {} thrown on Channel {}. Disconnect initiated", event, event.getChannel());
         event.getChannel().close();
         closeConnection();
-        super.exceptionCaught(ctx, event);
+        //super.exceptionCaught(ctx, event);
     }
 
     /**

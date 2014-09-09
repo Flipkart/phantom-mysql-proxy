@@ -39,10 +39,12 @@ public class MysqlClient {
     public void mysqlTest() throws Exception {
 
 
-        String dburl = "jdbc:mysql://localhost:8080/mydb?user=root&password=";
+        String dburl = "jdbc:mysql://localhost:8080/mydb";
+        String user = "saikat";
+        String pass = "saikat";
         Class.forName("com.mysql.jdbc.Driver").newInstance();
 
-        conn = DriverManager.getConnection(dburl);
+        conn = DriverManager.getConnection(dburl,user,pass);
         String sql1 = "Insert into mytable(t_title,t_author,submission_date) values('mysql_proxy','saikat',now())";
         System.out.println("sql1 "+ sql1);
         PreparedStatement ps1 = conn.prepareStatement(sql1);
