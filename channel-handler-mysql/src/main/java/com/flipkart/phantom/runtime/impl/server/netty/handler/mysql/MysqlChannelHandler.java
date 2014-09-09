@@ -380,6 +380,12 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
 
     private InputStream executeQueries(ChannelHandlerContext ctx, int flag, ArrayList<byte[]> buffer) throws Exception {
         /*
+        * Commenting out the code to pass queries to proxy using Hystrix wrapper.
+        * Currently observing connectivity issue with mysql client when used with
+        * user credentials with password.Any user without password works but when
+        * passing password it is failing to establish connection.
+        */
+        /*
         MysqlRequestWrapper executorMysqlRequest = new MysqlRequestWrapper();
         executorMysqlRequest.setFlag(flag);
         executorMysqlRequest.setBuffer(buffer);
