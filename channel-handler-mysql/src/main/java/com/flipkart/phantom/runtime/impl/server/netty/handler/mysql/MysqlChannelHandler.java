@@ -319,18 +319,13 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
     }
     private InputStream authenticate(ChannelHandlerContext ctx, int flag, ArrayList<byte[]> buffer) throws Exception {
 
-        switch (flag) {
-            case Flags.MODE_SEND_AUTH:
+        if(flag == Flags.MODE_SEND_AUTH)
                 Packet.write(this.mysqlOut, buffer);
-                break;
-            default:
-                break;
-
-        }
 
         return this.mysqlIn;
     }
     private void writeAuthResponse(ChannelHandlerContext ctx, MessageEvent messageEvent, InputStream in) throws Exception {
+
         byte[] packet = Packet.read_packet(in);
         this.buffer = new ArrayList<byte[]>();
         this.buffer.add(packet);
@@ -353,24 +348,21 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
 
         switch (Packet.getType(packet)) {
             case Flags.COM_QUIT:
-                this.halt(messageEvent);
+                this.halt();
                 break;
-
             // Extract out the new default schema
             case Flags.COM_INIT_DB:
                 this.schema = Com_Initdb.loadFromPacket(packet).schema;
                 break;
-
             // Query
             case Flags.COM_QUERY:
                 this.query = Com_Query.loadFromPacket(packet).query;
                 break;
-
             default:
                 break;
 
         }
-
+        // If the query is of type COM_QUIT then closing the socket connection above using halt method.
         if (Packet.getType(packet) != Flags.COM_QUIT) {
             this.in = executeQueries(ctx, Flags.MODE_SEND_QUERY, this.buffer);
             writeQueryResponse(ctx, messageEvent, this.in);
@@ -404,7 +396,6 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
             case Flags.OK:
             case Flags.ERR:
                 break;
-
             default:
                 this.buffer = readFullResultSet(in, messageEvent, this.buffer, this.bufferResultSet);
                 break;
@@ -414,11 +405,10 @@ public class MysqlChannelHandler extends SimpleChannelHandler implements Initial
         this.flag = Flags.MODE_READ_QUERY;
 
     }
-    private void halt(MessageEvent messageEvent) throws Exception {
+    private void halt() throws Exception {
         //close mysql socket and input/output stream
         closeConnection();
     }
-
     /**
      * A utility method to identify Hystrix command key or in other words the CRUD Mysql operations.
      * @param query Mysql query from client
