@@ -35,19 +35,18 @@ import java.io.InputStream;
 public class MysqlProxyExecutor extends HystrixCommand<InputStream> implements Executor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MysqlProxyExecutor.class);
-
     /**
      * the proxy client
      */
     private MysqlProxy proxy;
-
     /**
      * current task context
      */
     private TaskContext taskContext;
-
+    /**
+     * A wrapper object for Mysql request
+     */
     MysqlRequestWrapper mysqlRequestWrapper;
-
     /**
      * only constructor uses the proxy client, task context and the mysql requestWrapper
      */
@@ -65,9 +64,7 @@ public class MysqlProxyExecutor extends HystrixCommand<InputStream> implements E
 
         /** Get the Mysql Request */
         this.mysqlRequestWrapper = (MysqlRequestWrapper) requestWrapper;
-
     }
-
     /**
      * Interface method implementation
      *
@@ -83,18 +80,12 @@ public class MysqlProxyExecutor extends HystrixCommand<InputStream> implements E
         }
         return null;
     }
-
     /**
      * Interface method implementation
      *
      * @return response ResultSet from the fallback
      * @throws Exception
      */
-    @Override
-    protected InputStream getFallback() {
-        return this.proxy.fallbackRequest(this.mysqlRequestWrapper);
-    }
-
     /**
      * Getter/Setter methods
      */
@@ -102,4 +93,8 @@ public class MysqlProxyExecutor extends HystrixCommand<InputStream> implements E
         return proxy;
     }
     /** End Getter/Setter methods */
+    @Override
+    protected InputStream getFallback() {
+        return this.proxy.fallbackRequest(this.mysqlRequestWrapper);
+    }
 }

@@ -22,7 +22,6 @@ import com.flipkart.phantom.task.spi.RequestWrapper;
 import com.flipkart.phantom.task.spi.TaskContext;
 import com.flipkart.phantom.task.spi.registry.AbstractHandlerRegistry;
 import com.flipkart.phantom.task.spi.repository.ExecutorRepository;
-
 /**
  * Provides a repository of MysqlProxyExecutor classes which execute Mysql requests using Hystrix commands
  *
@@ -36,12 +35,10 @@ public class MysqlProxyExecutorRepository implements ExecutorRepository {
      * repository
      */
     private MysqlProxyRegistry registry;
-
     /**
      * The TaskContext instance
      */
     private TaskContext taskContext;
-
     /**
      * Returns {@link com.flipkart.phantom.task.spi.Executor} for the specified requestWrapper
      *
@@ -58,31 +55,24 @@ public class MysqlProxyExecutorRepository implements ExecutorRepository {
         }
         throw new RuntimeException("The MysqlProxy is not active.");
     }
-
     /**
      * Getter/Setter methods
      */
-
     @Override
     public AbstractHandlerRegistry getRegistry() {
         return registry;
     }
-
     @Override
     public void setRegistry(AbstractHandlerRegistry registry) {
         this.registry = (MysqlProxyRegistry) registry;
     }
-
     @Override
     public TaskContext getTaskContext() {
         return this.taskContext;
     }
-
     @Override
     public void setTaskContext(TaskContext taskContext) {
         this.taskContext = taskContext;
     }
     /** End Getter/Setter methods */
-
-
 }

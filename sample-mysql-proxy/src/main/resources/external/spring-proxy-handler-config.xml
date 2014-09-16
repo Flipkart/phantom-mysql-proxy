@@ -12,10 +12,6 @@
         <property name="name" value="defaultProxy" />
         <property name="host" value="localhost" />
         <property name="port" value="3306"/>
-        <property name="operationTimeout" value="2000" />
-        <property name="poolSize" value="10" />
-        <property name="maxWait" value="100" />
-        <property name="timeBetweenEvictionRunsMillis" value="20000" />
     </bean>
 
 </beans>

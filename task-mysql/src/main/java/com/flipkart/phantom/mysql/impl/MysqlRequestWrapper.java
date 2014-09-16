@@ -18,6 +18,9 @@ package com.flipkart.phantom.mysql.impl;
 
 import com.flipkart.phantom.task.spi.RequestWrapper;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 
 
@@ -30,63 +33,61 @@ import java.util.ArrayList;
  */
 public class MysqlRequestWrapper implements RequestWrapper {
 
-
-    /**
-     * flag to determine the state of request
-     */
-    private int flag;
-
     /**
      * Mysql request buffer wrapped in ArrayList object
      */
     private ArrayList<byte[]> buffer;
-
-    /**
-     * Mysql user credentials
-     */
-    private ArrayList<ArrayList<byte[]>> userCredentials;
-
     /**
      * Mysql command key (type of sql query)
      */
     private String commandKey;
-
+    /**
+     * Mysql socket for the connection
+     */
+    /**
+     * Mysql socket for the connection
+     */
+    public Socket mysqlSocket = null;
+    /**
+     * mysql socket input stream
+     */
+    public InputStream mysqlIn = null;
+    /**
+     * mysql socket output stream
+     */
+    public OutputStream mysqlOut = null;
     /**
      * Start Getter/Setter methods
      */
-
-    public int getFlag() {
-        return this.flag;
+    public Socket getMysqlSocket() {
+        return mysqlSocket;
     }
-
-    public void setFlag(int flag) {
-        this.flag = flag;
+    public void setMysqlSocket(Socket mysqlSocket) {
+        this.mysqlSocket = mysqlSocket;
     }
-
+    public InputStream getMysqlIn() {
+        return mysqlIn;
+    }
+    public void setMysqlIn(InputStream mysqlIn) {
+        this.mysqlIn = mysqlIn;
+    }
+    public OutputStream getMysqlOut() {
+        return mysqlOut;
+    }
+    public void setMysqlOut(OutputStream mysqlOut) {
+        this.mysqlOut = mysqlOut;
+    }
     public ArrayList<byte[]> getBuffer() {
         return buffer;
     }
-
     public void setBuffer(ArrayList<byte[]> buffer) {
         this.buffer = buffer;
     }
-
-    public ArrayList<ArrayList<byte[]>> getUserCredentials() {
-        return userCredentials;
-    }
-
-    public void setUserCredentials(ArrayList<ArrayList<byte[]>> userCredentials) {
-        this.userCredentials = userCredentials;
-    }
-
     public String getCommandKey() {
         return commandKey;
     }
-
     public void setCommandKey(String commandKey) {
         this.commandKey = commandKey;
     }
-
     /**End Getter/Setter methods */
-
 }

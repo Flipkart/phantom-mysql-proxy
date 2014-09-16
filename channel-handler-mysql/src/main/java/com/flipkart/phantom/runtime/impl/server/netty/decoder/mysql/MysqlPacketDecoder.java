@@ -45,26 +45,21 @@ public class MysqlPacketDecoder extends FrameDecoder {
     /**
      * Logger for this class
      */
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MysqlPacketDecoder.class);
-
+   private static final Logger LOGGER = LoggerFactory.getLogger(MysqlPacketDecoder.class);
     /**
      * Mysql header read size (length of compressed payload)
      * {@link http://dev.mysql.com/doc/internals/en/compressed-packet-header.html}
      */
      private static final int HEADER_READ_SIZE = 3;
-
     /**
      * Mysql header size (length of compressed payload + compressed sequence id)
      * {@link http://dev.mysql.com/doc/internals/en/compressed-packet-header.html}
      */
      private static final int HEADER_SIZE = 4;
-
     /**
      * Mysql packet OFFSET_MARKER. This is the index of first byte in the packet.
      */
      private static final int OFFSET_MARKER = 0;
-
     /**
      * Interface method implementation. Tries to read the Mysql protocol message. Returns null if unsuccessful, else returns the read byte array
      *
@@ -72,7 +67,6 @@ public class MysqlPacketDecoder extends FrameDecoder {
      */
     @Override
     protected Object decode(ChannelHandlerContext ctx, Channel channel, ChannelBuffer buf) throws Exception {
-
 
         InputStream in = new ChannelBufferInputStream(buf);
 

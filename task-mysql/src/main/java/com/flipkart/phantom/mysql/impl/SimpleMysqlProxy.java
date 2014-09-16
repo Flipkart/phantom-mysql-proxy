@@ -36,7 +36,6 @@ public class SimpleMysqlProxy extends MysqlProxy {
     public InputStream fallbackRequest(MysqlRequestWrapper mysqlRequestWrapper) {
         return null;
     }
-
     /**
      * Abstract method implementation
      *
@@ -46,7 +45,6 @@ public class SimpleMysqlProxy extends MysqlProxy {
     public String getGroupKey() {
         return "SimpleMysqlProxy";
     }
-
     /**
      * Abstract method implementation
      *
@@ -56,7 +54,6 @@ public class SimpleMysqlProxy extends MysqlProxy {
     public String getCommandKey() {
         return this.getName() + "MysqlPool";
     }
-
     /**
      * Abstract method implementation
      *
@@ -66,11 +63,8 @@ public class SimpleMysqlProxy extends MysqlProxy {
     public String getThreadPoolKey() {
         return "SimpleMysqlThreadPool";
     }
-
     @Override
     public int getOperationTimeout() {
         return 10000;
     }
-
-
 }

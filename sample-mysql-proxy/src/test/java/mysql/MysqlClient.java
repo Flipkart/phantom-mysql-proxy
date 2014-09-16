@@ -40,8 +40,8 @@ public class MysqlClient {
 
 
         String dburl = "jdbc:mysql://localhost:8080/mydb";
-        String user = "saikat";
-        String pass = "saikat";
+        String user = "newuser";
+        String pass = "password";
         Class.forName("com.mysql.jdbc.Driver").newInstance();
 
         conn = DriverManager.getConnection(dburl,user,pass);
