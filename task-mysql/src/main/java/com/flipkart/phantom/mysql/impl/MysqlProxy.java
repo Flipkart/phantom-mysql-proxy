@@ -38,14 +38,6 @@ import java.util.ArrayList;
 public abstract class MysqlProxy extends AbstractHandler {
 
     /**
-     * Host to connect to
-     */
-    public String host;
-    /**
-     * port to connect to
-     */
-    public int port;
-    /**
      * The default thread pool size
      */
     public static final int DEFAULT_THREAD_POOL_SIZE = 10;
@@ -120,8 +112,8 @@ public abstract class MysqlProxy extends AbstractHandler {
      */
     public String getDetails() {
         if (this != null) {
-            String details = "Endpoint: ";
-            details += "jdbc:mysql://" + this.getHost() + ":" + this.getPort() + "\n";
+            String details = "Proxy Name: ";
+            details += this.getName()+ "\n";
             return details;
         }
         return "No endpoint configured";
@@ -138,18 +130,6 @@ public abstract class MysqlProxy extends AbstractHandler {
     /**
      * getters / setters
      */
-    public int getPort() {
-        return port;
-    }
-    public void setPort(int port) {
-        this.port = port;
-    }
-    public String getHost() {
-        return host;
-    }
-    public void setHost(String host) {
-        this.host = host;
-    }
     public void setName(String name) {
         this.name = name;
     }

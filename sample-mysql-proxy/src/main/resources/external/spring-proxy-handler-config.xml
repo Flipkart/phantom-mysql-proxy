@@ -10,8 +10,6 @@
     <!-- mysql proxy -->
     <bean id="sampleMysqlProxy" class="com.flipkart.phantom.mysql.impl.SimpleMysqlProxy">
         <property name="name" value="defaultProxy" />
-        <property name="host" value="localhost" />
-        <property name="port" value="3306"/>
     </bean>
 
 </beans>
